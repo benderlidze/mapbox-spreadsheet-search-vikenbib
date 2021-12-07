@@ -9,6 +9,7 @@
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.5.0/mapbox-gl.css" rel="stylesheet" />
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/abdmob/x2js@master/xml2json.js"></script>
 
     <style>
         body {
@@ -288,16 +289,15 @@
         }
 
         .sidenav a {
-            padding: 8px 8px 8px 32px;
             text-decoration: none;
             font-size: 25px;
-            color: #818181;
             display: block;
+            color: black;
             transition: 0.3s;
         }
 
         .sidenav a:hover {
-            color: #f1f1f1;
+            color: #252525;
         }
 
         .sidenav .closebtn {
@@ -385,7 +385,7 @@
 
         .thumbnail {
             width: 275px;
-            
+
         }
 
         .mapboxgl-ctrl-bottom-left {
@@ -426,6 +426,16 @@
         const info = document.getElementById("info")
         const mainData = [];
         const colors = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#d9d9d9", "#bc80bd", "#ccebc5", "#ffed6f"];
+
+        const xmlData = [];
+
+        fetch("http://www.nb.no/baser/bibliotek/eksport/bb-full.xml")
+            .then(i => i.text())
+            .then(xmlText => {
+                var x2js = new X2JS();
+                var jsonObj = x2js.xml_str2json(xmlText);
+                xmlData.push(...jsonObj.BaseBibliotek.record)
+            })
 
         mapboxgl.accessToken = 'pk.eyJ1IjoiZXNtYXAiLCJhIjoiY2pwYmZkM2ExMDM3eDNrbzk3dWJ0ZmFjbyJ9.Dy8uEjj0Y-1HLE6fEZsKdA';
         var map = new mapboxgl.Map({
@@ -603,7 +613,7 @@
                 'layout': {
                     'text-field': ['get', 'title'],
                     'text-variable-anchor': ['bottom'],
-                    'text-radial-offset': 0.5,
+                    'text-radial-offset': 1,
                     'text-justify': 'auto',
                 },
                 "minzoom": 8,
@@ -614,9 +624,10 @@
                 'type': 'circle',
                 'source': 'pins',
                 'paint': {
-                    'circle-radius': 10,
+                    'circle-radius': 15,
                     'circle-color': '#5d8fff',
-                    'circle-opacity': 1
+                    'circle-opacity': 0.6,
+                    "circle-opacity-transition": { duration: 2000 },
                 },
                 "filter": ["==", ['get', 'id'], "NULL"] //hide all labels on init 
             });
@@ -633,8 +644,6 @@
 
             });
 
-
-
             map.on('mouseenter', 'pins', mouseEnter);
             map.on('mouseleave', 'pins', mouseLeave);
 
@@ -643,24 +652,14 @@
                 var data = e.features[0].properties;
 
                 const description = getDescr(data)
-                // Ensure that if the map is zoomed out such that multiple
-                // copies of the feature are visible, the popup appears
-                // over the copy being pointed to.
-                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-                }
-
-                // new mapboxgl.Popup()
-                //     .setLngLat(coordinates)
-                //     .setHTML(description)
-                //     .addTo(map);
 
                 map.setFilter('selected', ["==", ['get', "id"], data['id']]);
 
                 info.innerHTML = description;
                 openNav()
-
                 highlightFilterRow(data["number of resi "])
+
+                //map.setPaintProperty('selected', 'circle-opacity', 1)
             });
 
             d3.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTKsO9JkadrfeeItnSuXRAIjio4IW8Ehou_u1KXKbVxFX3xJkekg_7vzhJGBXKAeHzb2Lgr97g_-8Lc/pub?output=csv")
@@ -846,11 +845,24 @@
         function getDescr(data) {
             console.log('data', data);
 
+            const kommunenr = +data['kommunenr']
+
+            const xmlDataText = (xmlData.length > 0)
+                ? xmlData.filter(i => +i['kommnr'] === kommunenr).map(i => {
+                    return i
+                }).join("")
+                : ""
+
+            console.log('xmlDataText', xmlDataText);
+
             const img = (data['img'] !== "") ? `<img class="thumbnail" src="${data['thumbnail']}">` : ""
+            const matterport = (data['matterport'] !== "") ? `<a target="_blank" href="${data['matterport']}"> matterport</a>` : ""
 
             const description = `
                     <h1>${data['title']}</h1>
                     ${img}
+                    ${matterport}
+
                 `;
             return description;
         }
