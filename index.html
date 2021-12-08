@@ -436,7 +436,7 @@
 
         const xmlData = [];
 
-        fetch("http://www.nb.no/baser/bibliotek/eksport/bb-full.xml")
+        fetch("https://www.nb.no/baser/bibliotek/eksport/bb-full.xml")
             .then(i => i.text())
             .then(xmlText => {
                 var x2js = new X2JS();
