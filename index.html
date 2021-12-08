@@ -396,6 +396,13 @@
         .mapboxgl-ctrl-logo {
             display: none;
         }
+
+        .item-list {
+            margin: 10px 0px;
+        }
+        .item{
+            
+        }
     </style>
 </head>
 
@@ -849,7 +856,17 @@
 
             const xmlDataText = (xmlData.length > 0)
                 ? xmlData.filter(i => +i['kommnr'] === kommunenr).map(i => {
-                    return i
+                    return `
+                    <div class="item-list">
+                        <div class="item">${i['kommnr']}</div>
+                        <div class="item">tlf: ${i['tlf']}</div>
+                        <div class="item">url_hjem: ${i['url_hjem']}</div>
+                        <div class="item">vadr: ${i['vadr']}</div>
+                        <div class="item">bibleder: ${i['bibleder']}</div>
+                        <div class="item">bibnr: ${i['bibnr']}</div>
+                        <div class="item">katsyst: ${i['katsyst']}</div>
+                    </div>
+                    `
                 }).join("")
                 : ""
 
@@ -863,6 +880,7 @@
                     ${img}
                     ${matterport}
 
+                    ${xmlDataText}
                 `;
             return description;
         }
