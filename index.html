@@ -859,12 +859,12 @@
                     return `
                     <div class="item-list">
                         <div class="item">${i['kommnr']}</div>
-                        <div class="item">tlf: ${i['tlf']}</div>
                         <div class="item">url_hjem: ${i['url_hjem']}</div>
-                        <div class="item">vadr: ${i['vadr']}</div>
                         <div class="item">bibleder: ${i['bibleder']}</div>
                         <div class="item">bibnr: ${i['bibnr']}</div>
                         <div class="item">katsyst: ${i['katsyst']}</div>
+                        <div class="item">besadr: ${i['besadr']}</div>
+                        <div class="item">url_kat: ${i['url_kat']}</div>
                     </div>
                     `
                 }).join("")
@@ -873,12 +873,14 @@
             console.log('xmlDataText', xmlDataText);
 
             const img = (data['img'] !== "") ? `<img class="thumbnail" src="${data['thumbnail']}">` : ""
-            const matterport = (data['matterport'] !== "") ? `<a target="_blank" href="${data['matterport']}"> matterport</a>` : ""
+            const matterport = (data['matterport'] !== "") ? `<a target="_blank" href="${data['matterport']}"> Se 360-visning av biblioteket </a>` : ""
+            const grafana = (data['grafana'] !== "") ? `<a target="_blank" href="${data['grafana']}"> Se statistikk for biblioteket </a>` : ""
 
             const description = `
                     <h1>${data['title']}</h1>
                     ${img}
                     ${matterport}
+                    ${grafana}
 
                     ${xmlDataText}
                 `;
@@ -1045,7 +1047,7 @@
         }
 
         function openNav() {
-            let width = "300px"
+            let width = "360px"
             if (window.innerWidth <= 768) {
                 width = "100%"
             }
