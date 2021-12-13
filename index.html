@@ -296,8 +296,12 @@
             transition: 0.3s;
         }
 
-        .sidenav a:hover {
-            color: #252525;
+        .d3:hover {
+            color: orange
+        }
+
+        .grafana:hover {
+            color: red
         }
 
         .sidenav .closebtn {
@@ -400,8 +404,9 @@
         .item-list {
             margin: 10px 0px;
         }
-        .item{
-            padding:3px;
+
+        .item {
+            padding: 3px;
         }
     </style>
 </head>
@@ -852,10 +857,10 @@
         function getDescr(data) {
             console.log('data', data);
 
-            const kommunenr = +data['kommunenr']
+            const Bibnr = +data['Bibnr']
 
             const xmlDataText = (xmlData.length > 0)
-                ? xmlData.filter(i => +i['kommnr'] === kommunenr).map(i => {
+                ? xmlData.filter(i => +i['bibnr'] === Bibnr).map(i => {
                     return `
                     <div class="item-list">
                         <div class="item">${i['kommnr']}</div>
@@ -873,8 +878,8 @@
             console.log('xmlDataText', xmlDataText);
 
             const img = (data['img'] !== "") ? `<img class="thumbnail" src="${data['thumbnail']}">` : ""
-            const matterport = (data['matterport'] !== "") ? `<a target="_blank" href="${data['matterport']}"> Se 360-visning av biblioteket </a>` : ""
-            const grafana = (data['grafana'] !== "") ? `<a target="_blank" href="${data['grafana']}"> Se statistikk for biblioteket </a>` : ""
+            const matterport = (data['matterport'] !== "") ? `<a class="d3" target="_blank" href="${data['matterport']}"> Se 360-visning av biblioteket </a>` : ""
+            const grafana = (data['grafana'] !== "") ? `<a class="grafana" target="_blank" href="${data['grafana']}"> Se statistikk for biblioteket </a>` : ""
 
             const description = `
                     <h1>${data['title']}</h1>
