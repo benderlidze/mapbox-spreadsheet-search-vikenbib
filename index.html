@@ -294,14 +294,13 @@
             transition: 0.3s;
         }
 
-        .big{
+        .big {
             font-size: 25px;
             display: block;
         }
 
         .d3:hover {
             color: orange
-            
         }
 
         .grafana:hover {
@@ -333,8 +332,6 @@
             cursor: pointer;
         }
 
-
-
         .arrow {
             border: solid black;
             border-width: 0 3px 3px 0;
@@ -357,8 +354,7 @@
             padding: 10px;
         }
 
-        #berlinLyaerToggle {
-            display: none;
+        #norwayLayerToggle {
             position: absolute;
             bottom: 60px;
             left: 5px;
@@ -367,7 +363,7 @@
             padding: 10px;
         }
 
-        #berlinLyaerToggle:hover {
+        #norwayLayerToggle:hover {
             background-color: #eeeeee;
         }
 
@@ -427,7 +423,7 @@
         <div id="info"></div>
     </div>
     <button class="button" id="resetButton">Reset</button>
-    <button class="button" id="berlinLyaerToggle">District layer</button>
+    <button class="button" id="norwayLayerToggle">District layer</button>
 
     <div id="leftBottom"></div>
     <div id="filters" style="height:290px;"></div>
@@ -442,7 +438,7 @@
     <script>
         const GEO = [];
         const leftBottom = document.getElementById("leftBottom")
-        const berlinLyaerToggle = document.getElementById("berlinLyaerToggle")
+        const norwayLayerToggle = document.getElementById("norwayLayerToggle")
         const filters = document.getElementById("filters")
         const info = document.getElementById("info")
         const mainData = [];
@@ -520,38 +516,36 @@
             },
             );
 
-            // fetch("data/berlin.geojson")
-            //     .then(i => i.json())
-            //     .then(i => {
+            fetch("data/counties.json")
+                .then(i => i.json())
+                .then(i => {
+                    map.getSource("norway").setData(i)
+                    const centers = i.features.map(i => turf.centerOfMass(i, { ...i }))
+                    const collection = turf.featureCollection(centers);
+                    map.getSource("centers").setData(collection)
+                    console.log('collection', collection);
+                })
 
-            //         map.getSource("berlin").setData(i)
+            map.addSource('norway', {
+                'type': 'geojson',
+                'data': {
+                    type: "FeatureCollection",
+                    features: []
+                }
+            });
 
-            //         const centers = i.features.map(i => turf.centerOfMass(i, { ...i }))
-            //         const collection = turf.featureCollection(centers);
-            //         map.getSource("centers").setData(collection)
-            //         console.log('collection', collection);
-            //     })
-
-            // map.addSource('berlin', {
-            //     'type': 'geojson',
-            //     'data': {
-            //         type: "FeatureCollection",
-            //         features: []
-            //     }
-            // });
-
-            // map.addLayer({
-            //     'id': 'berlin',
-            //     'type': 'line',
-            //     'source': 'berlin',
-            //     'layout': {
-            //         'visibility': "visible"
-            //     },
-            //     'paint': {
-            //         'line-color': 'gray',
-            //         'line-width': 2
-            //     },
-            // });
+            map.addLayer({
+                'id': 'norway',
+                'type': 'line',
+                'source': 'norway',
+                'layout': {
+                    'visibility': "visible"
+                },
+                'paint': {
+                    'line-color': 'gray',
+                    'line-width': 2
+                },
+            });
 
             map.addSource('centers', {
                 'type': 'geojson',
@@ -737,14 +731,14 @@
             document.getElementById("myInput").value = "";
         })
 
-        berlinLyaerToggle.addEventListener("click", () => {
-            console.log('map.getLayer("berlin").visibility', map.getLayer("berlin").visibility);
-            if (map.getLayer("berlin").visibility === "visible") {
-                map.setLayoutProperty('berlin', 'visibility', 'none');
+        norwayLayerToggle.addEventListener("click", () => {
+            console.log('map.getLayer("norway").visibility', map.getLayer("norway").visibility);
+            if (map.getLayer("norway").visibility === "visible") {
+                map.setLayoutProperty('norway', 'visibility', 'none');
                 map.setLayoutProperty('centers', 'visibility', 'none');
             }
             else {
-                map.setLayoutProperty('berlin', 'visibility', 'visible');
+                map.setLayoutProperty('norway', 'visibility', 'visible');
                 map.setLayoutProperty('centers', 'visibility', 'visible');
             }
         })
