@@ -290,14 +290,18 @@
 
         .sidenav a {
             text-decoration: none;
-            font-size: 25px;
-            display: block;
             color: black;
             transition: 0.3s;
         }
 
+        .big{
+            font-size: 25px;
+            display: block;
+        }
+
         .d3:hover {
             color: orange
+            
         }
 
         .grafana:hover {
@@ -407,6 +411,11 @@
 
         .item {
             padding: 3px;
+        }
+
+        .b-title {
+            padding-top: 15px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -864,12 +873,12 @@
                     return `
                     <div class="item-list">
                         <div class="item">${i['kommnr']}</div>
-                        <div class="item">Hjemmeside: ${i['url_hjem']}</div>
+                        <div class="item">Hjemmeside: <a href="${i['url_hjem']}" target="_blank">${i['url_hjem']}</a></div>
                         <div class="item">Biblioteksjef: ${i['bibleder']}</div>
                         <div class="item">Biblioteknummer: ${i['bibnr']}</div>
                         <div class="item">Katalogsystem: ${i['katsyst']}</div>
                         <div class="item">Besøksadresse: ${i['besadr']}</div>
-                        <div class="item">Kataløgsøk: ${i['url_kat']}</div>
+                        <div class="item">Katalogsøk: <a href="${i['url_kat']}" target="_blank">${i['url_kat']}</a></div>
                     </div>
                     `
                 }).join("")
@@ -878,15 +887,15 @@
             console.log('xmlDataText', xmlDataText);
 
             const img = (data['img'] !== "") ? `<img class="thumbnail" src="${data['thumbnail']}">` : ""
-            const matterport = (data['matterport'] !== "") ? `<a class="d3" target="_blank" href="${data['matterport']}"> Se 360-visning av biblioteket </a>` : ""
-            const grafana = (data['grafana'] !== "") ? `<a class="grafana" target="_blank" href="${data['grafana']}"> Se statistikk for biblioteket </a>` : ""
+            const matterport = (data['matterport'] !== "") ? `<a class="d3 big" target="_blank" href="${data['matterport']}"> Se 360-visning av biblioteket </a>` : ""
+            const grafana = (data['grafana'] !== "") ? `<a class="grafana big" target="_blank" href="${data['grafana']}"> Se statistikk for biblioteket </a>` : ""
 
             const description = `
                     <h1>${data['title']}</h1>
                     ${img}
                     ${matterport}
                     ${grafana}
-
+                    <div class="b-title">Info fra BaseBibliotek</div>
                     ${xmlDataText}
                 `;
             return description;
